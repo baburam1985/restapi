@@ -27,9 +27,28 @@ public class Sector {
 	
 	public Sector() {};
 	
+	public Sector(String sectorName, String sectorDesc) {
+		this.sectorName = sectorName;
+		this.sectorDesc = sectorDesc;
+	}
+	
 	public Sector(int id, String sectorName, String sectorDesc) {
 		this.id = id;
 		this.sectorName = sectorName;
 		this.sectorDesc = sectorDesc;
 	}
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Sector [id=");
+		builder.append(id);
+		builder.append(", sectorName=");
+		builder.append(sectorName);
+		builder.append(", sectorDesc=");
+		builder.append(sectorDesc);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 }

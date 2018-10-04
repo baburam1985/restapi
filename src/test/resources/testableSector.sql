@@ -1,0 +1,1 @@
+INSERT INTO MARKET_SECTOR VALUES (null,'Health','Healthcare Industries')

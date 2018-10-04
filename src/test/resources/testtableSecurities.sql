@@ -1,0 +1,1 @@
+INSERT INTO SECURITIES VALUES('FB','Facebook, Inc', 'Internet-related services and products', 1);
