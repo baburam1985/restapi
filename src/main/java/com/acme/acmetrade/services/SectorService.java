@@ -30,7 +30,12 @@ public class SectorService {
     
     public int updateMarketSector(Sector sector) {
     	
-    	return marketSectorRepository.updateMarketSector(sector);
+    	try {
+			return marketSectorRepository.updateMarketSector(sector);
+		} catch (DataAccessException e) {
+			log.error("Unable to update market sector:\t{}", sector, e);
+			return 0;
+		}
     }
     
     public Sector getMarketSectorByName(String name) {

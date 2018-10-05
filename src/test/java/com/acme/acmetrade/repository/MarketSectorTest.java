@@ -11,14 +11,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.acme.acmetrade.TradeApplication;
 import com.acme.acmetrade.domain.Sector;
 
-@Sql(scripts= {"classpath:/testableSector.sql"})
+
 @RunWith(SpringRunner.class) 
 @SpringBootTest(classes = {TradeApplication.class})
 

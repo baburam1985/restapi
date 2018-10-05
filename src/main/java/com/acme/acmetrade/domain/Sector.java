@@ -1,9 +1,18 @@
 package com.acme.acmetrade.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Sector {
 	
+	@JsonProperty(defaultValue="0")
 	private int id;
+	
+	@JsonProperty()
 	private String sectorName;
+	
+	@JsonProperty
 	private String sectorDesc;
 	
 	public int getId() {

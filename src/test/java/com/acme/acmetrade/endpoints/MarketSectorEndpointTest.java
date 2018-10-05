@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
+import java.util.List;
+
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,8 +18,8 @@ import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.acme.acmetrade.TradeApplication;
 import com.acme.acmetrade.domain.ResponseStatus;
@@ -38,7 +40,7 @@ public class MarketSectorEndpointTest {
 	public void init() {
 		RestAssured.port = serverPort;
 	}
-
+	
 	@Test
 	public void allSectorsReturned() {
 		Response response =  given().accept(MediaType.APPLICATION_JSON_VALUE)
@@ -47,7 +49,7 @@ public class MarketSectorEndpointTest {
 		.and().extract().response(); 
 		
 		Sector[] jsonResponse = response.as(Sector[].class); 
-		assertThat(jsonResponse.length, equalTo(2));
+		assertThat(jsonResponse.length, equalTo(3));
 	}
 	
 	@Test
@@ -77,6 +79,7 @@ public class MarketSectorEndpointTest {
 	}
 	
 	@Test
+	@Transactional
 	public void addSector() throws JSONException {
 		JSONObject json = new JSONObject();
 		
@@ -89,9 +92,9 @@ public class MarketSectorEndpointTest {
 				.when().post("/sectors")
 				.then().statusCode(HttpStatus.SC_CREATED)
 				.and().extract().response();
-		ResponseStatus status = response.as(ResponseStatus.class);
+		ResponseStatus[] status = response.as(ResponseStatus[].class);
 		
-		assertThat(status.getStatusCode(), equalTo(0));
+		assertThat(status[0].getStatusCode(), equalTo("0"));
 		
 	}
 	
@@ -116,9 +119,8 @@ public class MarketSectorEndpointTest {
 	}
 	
 	@Test
-	@Sql(scripts= {"classpath:testableSector.sql"})
+	@Transactional
 	public void deleteSector() {
-		
 		Response response = given().accept(MediaType.APPLICATION_JSON_VALUE)
 				.pathParam("sectorId", 3)
 				.auth().basic("admin", "admin")
@@ -127,15 +129,15 @@ public class MarketSectorEndpointTest {
 				.and().extract().response();
 		ResponseStatus status = response.as(ResponseStatus.class);
 		
-		assertThat(status.getStatusCode(), equalTo(0));
+		assertThat(status.getStatusCode(), equalTo("0"));
 		
 	}
 	
 	@Test
-	@Sql(scripts= {"classpath:testableSector.sql"})
+	@Transactional
 	public void updateSector() throws JSONException {
 		JSONObject json = new JSONObject();
-		
+		json.put("id", 3);
 		json.put("sectorName", "Test");
 		json.put("sectorDesc", "Test sector");
 		
@@ -147,7 +149,7 @@ public class MarketSectorEndpointTest {
 				.and().extract().response();
 		ResponseStatus status = response.as(ResponseStatus.class);
 		
-		assertThat(status.getStatusCode(), equalTo(0));
+		assertThat(status.getStatusCode(), equalTo("0"));
 	}
 
 }

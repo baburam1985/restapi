@@ -1,8 +1,12 @@
 package com.acme.acmetrade.endpoints;
 
-import java.util.List;
 
-import javax.websocket.server.PathParam;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -11,6 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.acme.acmetrade.domain.ResponseStatus;
 import com.acme.acmetrade.domain.Sector;
 import com.acme.acmetrade.services.SectorService;
+import com.acme.acmetrade.validator.SectorValidator;
 
 @RestController
 public class MarketSectorEndpoint {
@@ -28,6 +37,14 @@ public class MarketSectorEndpoint {
 
 	@Autowired
 	SectorService service;
+	
+	@Autowired
+	SectorValidator sectorValidator;
+	
+	@InitBinder
+	private void binder(WebDataBinder binder) {
+		binder.setValidator(sectorValidator);
+	}
 
 	@RequestMapping(value = "/sectors", method = RequestMethod.GET)
 	public List<Sector> getSectors() {
@@ -35,17 +52,25 @@ public class MarketSectorEndpoint {
 	}
 
 	@RequestMapping(path = "/sectors", method = RequestMethod.POST)
-	public ResponseEntity<ResponseStatus> addSector(@RequestBody Sector sector) {
+	public ResponseEntity<List<ResponseStatus>> addSector(@Valid @RequestBody Sector sector, BindingResult result) {        
+        
+		if (result.hasErrors()) {
+			List<ResponseStatus> list = result.getFieldErrors().stream().map(fieldError -> {
+				return new ResponseStatus(fieldError.getCode(), fieldError.getDefaultMessage());				
+			}).collect(Collectors.toList());			
+			return new ResponseEntity<List<ResponseStatus>>(list, HttpStatus.UNPROCESSABLE_ENTITY);
+		}
 		
-		log.info("Sector:\t{}", sector);
 		int numRows = service.addMarketSector(sector);
 		
 		if (numRows == 1) {
-			return new ResponseEntity<ResponseStatus>(
-					new ResponseStatus(0, "Successfully added new sector"), HttpStatus.CREATED); 
+			return new ResponseEntity<List<ResponseStatus>>(
+					java.util.Collections.singletonList(
+					new ResponseStatus("0", "Successfully added new sector")), HttpStatus.CREATED); 
 		} else {
-			return new ResponseEntity<ResponseStatus>(
-					new ResponseStatus(1111, "Unable to add new sector"), HttpStatus.UNPROCESSABLE_ENTITY);
+			return new ResponseEntity<List<ResponseStatus>>(
+					Collections.singletonList(new ResponseStatus("1111", "Unable to add new sector"))
+					, HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 	}
 
@@ -61,22 +86,24 @@ public class MarketSectorEndpoint {
 	@RequestMapping(path = "/sectors/{id}", method = RequestMethod.DELETE)
 	public ResponseStatus deleteSector(@PathVariable("id") int id) {
 		int numRows = service.deleteMarketSector(new Sector(id, StringUtils.EMPTY, StringUtils.EMPTY));
+		
+		log.info("Number of rows deleted:\t{}", numRows);
 
 		if (numRows == 1) {
-			return new ResponseStatus(0, "Successfully deleted sector");
+			return new ResponseStatus("0", "Successfully deleted sector");
 		} else {
-			return new ResponseStatus(1111, "Unable to delete sector");
+			return new ResponseStatus("1111", "Unable to delete sector");
 		}
 	}
 
 	@RequestMapping(path = "/sectors", method = RequestMethod.PATCH)
-	public ResponseStatus updateMarketSector(Sector sector) {
+	public ResponseStatus updateMarketSector(@RequestBody Sector sector) {
 		int numRows = service.updateMarketSector(sector);
 
 		if (numRows == 1) {
-			return new ResponseStatus(0, "Successfully updated sector");
+			return new ResponseStatus("0", "Successfully updated sector");
 		} else {
-			return new ResponseStatus(1111, "Unable to updated sector");
+			return new ResponseStatus("1111", "Unable to updated sector");
 		}
 	}
 }

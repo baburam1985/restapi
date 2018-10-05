@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,6 +15,8 @@ import com.acme.acmetrade.domain.Sector;
 
 @Repository
 public class MarketSectorRepository {
+	
+	Logger log = LoggerFactory.getLogger(MarketSectorRepository.class);
 	
 	@Autowired
 	JdbcTemplate jdbcTemplate;
@@ -63,7 +67,6 @@ public class MarketSectorRepository {
 			sector.setSectorDesc(rs.getString("SECTOR_DESC"));
 			sector.setSectorName(rs.getString("SECTOR_NAME"));			
 			return sector;
-		}
-		
+		}		
 	}
 }

@@ -50,6 +50,11 @@ public class SecurityRepository {
 		return jdbcTemplate.query("SELECT * from SECURITIES", new SecurityRowMapper());
 	}
 
+	public List<Security> searchAllSecurities(String symbol) {
+		return jdbcTemplate.query("SELECT * from SECURITIES where SYMBOL like ?",new SecurityRowMapper(), new Object[] {symbol+"%"});
+	}
+
+
 	public Security retrieveSecurityBySymbol(String symbol) {
 		return (Security)jdbcTemplate.queryForObject("SELECT * from SECURITIES where SYMBOL = ?",new SecurityRowMapper(), new Object[] {symbol});
 	}

@@ -2,23 +2,23 @@ package com.acme.acmetrade.domain;
 
 public class ResponseStatus {
 
-	private int statusCode;
+	private String statusCode;
 	private String statusMessage;
 	
 	public ResponseStatus() {
 		
 	}
 	
-	public ResponseStatus(int statusCode, String statusMessage) {
+	public ResponseStatus(String statusCode, String statusMessage) {
 		this.statusCode = statusCode;
 		this.statusMessage = statusMessage;
 	}
 
-	public int getStatusCode() {
+	public String getStatusCode() {
 		return statusCode;
 	}
 
-	public void setStatusCode(int statusCode) {
+	public void setStatusCode(String statusCode) {
 		this.statusCode = statusCode;
 	}
 

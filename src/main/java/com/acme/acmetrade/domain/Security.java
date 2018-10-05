@@ -1,9 +1,23 @@
 package com.acme.acmetrade.domain;
 
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+
+import javax.validation.constraints.NotNull;
+
+@EntityScan
 public class Security {
+
+    @NotNull
     private String symbol;
+
+    @NotNull
     private String companyName;
+
+    @NotNull
     private int sectorId;
+
     private String description;
 
     public String getSymbol() {
@@ -11,6 +25,7 @@ public class Security {
     }
 
     public void setSymbol(String symbol) {
+
         this.symbol = symbol;
     }
 
